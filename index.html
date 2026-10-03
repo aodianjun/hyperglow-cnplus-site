@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HyperGlow CN+ · HyperOS 息屏 / 锁屏逐字歌词</title>
+<meta name="description" content="HyperOS 3 息屏与锁屏逐字歌词 Xposed 模块:卡拉 OK 式逐字高亮、多种歌词源、外观自由定制。开源免费。">
+<style>
+  :root {
+    --bg: #0b0b0f;
+    --surface: #16161d;
+    --surface-2: #1e1e27;
+    --text: #f2f2f5;
+    --muted: #9a9aa6;
+    --accent: #7eb8ff;
+    --accent-2: #ffd166;
+    --border: #2a2a35;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "MiSans", "PingFang SC", "Microsoft YaHei", system-ui, -apple-system, sans-serif;
+    line-height: 1.7;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 20px; }
+  header {
+    padding: 72px 0 48px;
+    background: linear-gradient(180deg, #101018 0%, var(--bg) 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    display: inline-block;
+    font-size: 13px;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    padding: 2px 12px;
+    margin-bottom: 16px;
+  }
+  h1 { font-size: 34px; font-weight: 700; letter-spacing: 0.5px; }
+  .tagline { color: var(--muted); font-size: 17px; margin-top: 10px; max-width: 640px; }
+  .cta { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-block;
+    padding: 10px 22px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    background: var(--surface);
+    transition: transform .12s ease, background .12s ease;
+  }
+  .btn:hover { transform: translateY(-1px); background: var(--surface-2); }
+  .btn.primary { background: #2b5cad; border-color: #2b5cad; color: #fff; }
+  .btn.primary:hover { background: #3469c2; }
+  section { padding: 44px 0; }
+  section + section { border-top: 1px solid var(--border); }
+  h2 { font-size: 22px; margin-bottom: 20px; }
+  h2 .en { color: var(--muted); font-size: 14px; font-weight: 400; margin-left: 8px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+  }
+  .card h3 { font-size: 16px; margin-bottom: 8px; color: var(--accent); }
+  .card p, .card li { color: var(--muted); font-size: 14.5px; }
+  .card ul { padding-left: 18px; }
+  .card li { margin: 4px 0; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .shot {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    aspect-ratio: 9 / 19.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #55556a;
+    font-size: 13px;
+    text-align: center;
+    padding: 12px;
+  }
+  .shot img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+  ol.steps { padding-left: 20px; color: var(--muted); }
+  ol.steps li { margin: 8px 0; }
+  ol.steps a { color: var(--accent); text-decoration: none; }
+  ol.steps a:hover { text-decoration: underline; }
+  code {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1px 7px;
+    font-size: 13.5px;
+  }
+  .support-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  .qr-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+  }
+  .qr-card img {
+    width: 100%;
+    max-width: 260px;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto 12px;
+  }
+  .qr-card .label { font-weight: 600; }
+  .qr-card .hint { color: var(--muted); font-size: 13.5px; margin-top: 4px; }
+  .links a { color: var(--accent); text-decoration: none; }
+  .links a:hover { text-decoration: underline; }
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0 48px;
+    color: #6a6a78;
+    font-size: 13.5px;
+  }
+  footer a { color: var(--muted); }
+  @media (max-width: 560px) {
+    h1 { font-size: 26px; }
+    header { padding: 52px 0 36px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <span class="badge">Xposed · LSPosed</span>
+    <h1>HyperGlow CN+</h1>
+    <p class="tagline">给 HyperOS 3 的小米 / 红米手机:在<b>息屏显示</b>与<b>锁屏</b>上显示歌词,
+    随播放进度<b>逐字高亮</b>,像卡拉 OK 一样一句句推进。开源免费,专为国内音乐 App 与歌词源打磨。</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/aodianjun/com.aodianjun.hyperglow.cnplus/releases">下载最新版</a>
+      <a class="btn" href="https://github.com/aodianjun/com.aodianjun.hyperglow.cnplus">GitHub 仓库</a>
+      <a class="btn" href="#support">支持作者</a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<section id="shots">
+  <h2>实机效果<span class="en">Screenshots</span></h2>
+  <div class="shots">
+    <div class="shot">锁屏逐字歌词<br>截图位(建议 1080×2340)</div>
+    <div class="shot">息屏 AOD 逐字歌词<br>截图位(建议 1080×2340)</div>
+    <div class="shot">外观编辑器实时预览<br>截图位(可选)</div>
+  </div>
+  <p style="color:var(--muted);font-size:13.5px;margin-top:10px">把截图文件放到仓库 assets/ 目录并替换本区块即可;替换方法见仓库说明。</p>
+</section>
+
+<section id="features">
+  <h2>功能<span class="en">Features</span></h2>
+  <div class="grid">
+    <div class="card">
+      <h3>歌词显示</h3>
+      <ul>
+        <li>息屏(AOD) + 锁屏两个曲面独立开关与配置</li>
+        <li>逐字卡拉 OK 高亮、整行扫光、辉光</li>
+        <li>副行显示音标 / 翻译,可预览下一行,支持注音</li>
+        <li>歌曲信息行:歌名 / 歌手 / 专辑自由拼装</li>
+        <li>多种换行动画(含「跟随音源」)</li>
+        <li>歌词时间偏移:±5 秒、50ms 一档</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>外观自由调</h3>
+      <ul>
+        <li>字号 / 字重 / 字族,支持导入自定义字体</li>
+        <li>主色 / 副色 / 信息色 / 卡片背景与透明度</li>
+        <li>位置锚定、自定义纵向偏移、宽度占比</li>
+        <li>横屏:随设备旋转、全屏化居中、安全边距</li>
+        <li>App 自身也定制:主题 / 背景图 / 悬浮底栏</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>息屏专属</h3>
+      <ul>
+        <li>防烧屏:时钟图案移动与间隔可调</li>
+        <li>实时跟随系统时钟 / 锚定两种模式</li>
+        <li>亮度提升与自定义亮度</li>
+        <li>渲染刷新率上限</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>歌词来源</h3>
+      <ul>
+        <li>Spicy EX(Spotify)</li>
+        <li>Lyricon / SuperLyric / LyricInfo</li>
+        <li>插件系统:可扩展歌词处理链</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>工程化</h3>
+      <ul>
+        <li>配置备份导出 / 导入(JSON)</li>
+        <li>诊断日志、兼容性报告一键导出</li>
+        <li>简体中文 / 繁体中文 / English</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <h2>安装<span class="en">Install</span></h2>
+  <ol class="steps">
+    <li>准备一台 <b>HyperOS 3</b> 的小米 / 红米机型,并已解锁安装 <b>LSPosed</b> 框架。</li>
+    <li>从 <a href="https://github.com/aodianjun/com.aodianjun.hyperglow.cnplus/releases">GitHub Releases</a> 下载最新 APK 并安装
+        (正式版日常使用;调试版仅用于反馈问题时提供日志)。</li>
+    <li>在 LSPosed 中启用模块,作用域勾选 <code>系统界面(SystemUI)</code> 与 <code>息屏显示</code>,按提示重启系统界面。</li>
+    <li>安装一个歌词源:手机里的 <b>Spicy EX</b>(Spotify)或 <b>Lyricon / SuperLyric / LyricInfo</b> 模块,App 内选择即可。</li>
+    <li>打开 HyperGlow CN+,先看「状态」页确认模块运行正常,再到「设置 → 外观」里调整样式。</li>
+  </ol>
+  <p style="color:var(--muted);font-size:14px;margin-top:14px">
+    详细排查(模块未生效 / 歌词不显示 / 不支持机型)见仓库
+    <a style="color:var(--accent)" href="https://github.com/aodianjun/com.aodianjun.hyperglow.cnplus/blob/main/FAQ.md">FAQ</a>。
+  </p>
+</section>
+
+<section id="support">
+  <h2>支持作者<span class="en">Support</span></h2>
+  <p style="color:var(--muted);margin-bottom:18px">
+    项目完全开源免费。如果它帮到了你,欢迎请作者喝杯咖啡 ☕
+  </p>
+  <div class="support-grid">
+    <div class="qr-card">
+      <img src="assets/wechat-reward.jpg" alt="微信赞赏码">
+      <div class="label">微信赞赏</div>
+      <div class="hint">微信扫一扫</div>
+    </div>
+    <div class="qr-card">
+      <img src="assets/alipay.jpg" alt="支付宝收款码">
+      <div class="label">支付宝</div>
+      <div class="hint">支付宝扫一扫</div>
+    </div>
+    <div class="qr-card" style="display:flex;flex-direction:column;justify-content:center">
+      <div class="label" style="margin-bottom:8px">其他方式</div>
+      <p class="hint" style="margin-bottom:14px">GitHub 用户也可以点个 Star,或关注项目动态:</p>
+      <div class="links">
+        <a href="https://github.com/aodianjun/com.aodianjun.hyperglow.cnplus">⭐ GitHub 仓库</a><br><br>
+        <a href="https://github.com/aodianjun">👤 作者主页</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    HyperGlow CN+ 基于 GPL-3.0 开源,上游
+    <a href="https://github.com/amarinne/hyperglow">HyperGlow</a> · 渲染源自
+    <a href="https://github.com/limczhh/HyperLyric">HyperLyric</a> ·
+    UI 基于 <a href="https://github.com/miuix-kotlin-multiplatform/miuix">miuix</a>。
+    与 MIUI / HyperOS 官方无关。
+  </div>
+</footer>
+
+</body>
+</html>
