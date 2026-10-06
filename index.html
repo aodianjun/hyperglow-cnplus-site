@@ -78,23 +78,22 @@
   .shot-group + .shot-group { margin-top: 34px; }
   .shot-group h3 { font-size: 16px; margin-bottom: 12px; }
   .shot-group h3 .en { color: var(--muted); font-size: 13px; font-weight: 400; margin-left: 8px; }
-  .shots { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 14px; align-items: center; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
   .shot {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 10px;
-    margin: 0;
+    margin: 0 auto;
+    width: 100%;
   }
+  .shot.portrait { max-width: 280px; }
+  .shot.landscape { grid-column: 1 / -1; max-width: 640px; }
   .shot video { display: block; width: 100%; border-radius: 10px; background: #000; }
   .shot.portrait video { aspect-ratio: 864 / 1920; object-fit: cover; }
   .shot.landscape video { aspect-ratio: 16 / 9; object-fit: cover; }
   .shot figcaption { text-align: center; color: var(--muted); font-size: 13px; margin-top: 8px; }
   .shot-note { color: var(--muted); font-size: 13.5px; margin-top: 16px; }
-  @media (max-width: 700px) {
-    .shots { grid-template-columns: 1fr 1fr; }
-    .shot.landscape { grid-column: 1 / -1; }
-  }
   ol.steps { padding-left: 20px; color: var(--muted); }
   ol.steps li { margin: 8px 0; }
   ol.steps a { color: var(--accent); text-decoration: none; }
