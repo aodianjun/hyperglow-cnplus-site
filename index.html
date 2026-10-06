@@ -75,21 +75,26 @@
   .card p, .card li { color: var(--muted); font-size: 14.5px; }
   .card ul { padding-left: 18px; }
   .card li { margin: 4px 0; }
-  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+  .shot-group + .shot-group { margin-top: 34px; }
+  .shot-group h3 { font-size: 16px; margin-bottom: 12px; }
+  .shot-group h3 .en { color: var(--muted); font-size: 13px; font-weight: 400; margin-left: 8px; }
+  .shots { display: grid; grid-template-columns: 1fr 1fr 1.5fr; gap: 14px; align-items: center; }
   .shot {
     background: var(--surface);
-    border: 1px dashed var(--border);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    aspect-ratio: 9 / 19.5;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #55556a;
-    font-size: 13px;
-    text-align: center;
-    padding: 12px;
+    padding: 10px;
+    margin: 0;
   }
-  .shot img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+  .shot video { display: block; width: 100%; border-radius: 10px; background: #000; }
+  .shot.portrait video { aspect-ratio: 864 / 1920; object-fit: cover; }
+  .shot.landscape video { aspect-ratio: 16 / 9; object-fit: cover; }
+  .shot figcaption { text-align: center; color: var(--muted); font-size: 13px; margin-top: 8px; }
+  .shot-note { color: var(--muted); font-size: 13.5px; margin-top: 16px; }
+  @media (max-width: 700px) {
+    .shots { grid-template-columns: 1fr 1fr; }
+    .shot.landscape { grid-column: 1 / -1; }
+  }
   ol.steps { padding-left: 20px; color: var(--muted); }
   ol.steps li { margin: 8px 0; }
   ol.steps a { color: var(--accent); text-decoration: none; }
@@ -157,13 +162,45 @@
 <main class="wrap">
 
 <section id="shots">
-  <h2>实机效果<span class="en">Screenshots</span></h2>
-  <div class="shots">
-    <div class="shot">锁屏逐字歌词<br>截图位(建议 1080×2340)</div>
-    <div class="shot">息屏 AOD 逐字歌词<br>截图位(建议 1080×2340)</div>
-    <div class="shot">外观编辑器实时预览<br>截图位(可选)</div>
+  <h2>实机效果<span class="en">Live demos</span></h2>
+
+  <div class="shot-group">
+    <h3>蝴蝶 <span class="en">洛天依 Official · 中文歌</span></h3>
+    <div class="shots">
+      <figure class="shot portrait">
+        <video src="assets/shots/butterfly-lockscreen.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <figcaption>锁屏逐字歌词</figcaption>
+      </figure>
+      <figure class="shot portrait">
+        <video src="assets/shots/butterfly-aod.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <figcaption>息屏 AOD 逐字歌词</figcaption>
+      </figure>
+      <figure class="shot landscape">
+        <video src="assets/shots/butterfly-landscape.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <figcaption>横屏 AOD · 全屏化居中</figcaption>
+      </figure>
+    </div>
   </div>
-  <p style="color:var(--muted);font-size:13.5px;margin-top:10px">把截图文件放到仓库 assets/ 目录并替换本区块即可;替换方法见仓库说明。</p>
+
+  <div class="shot-group">
+    <h3>Take Me Hand <span class="en">DAISHI DANCE · 英文歌</span></h3>
+    <div class="shots">
+      <figure class="shot portrait">
+        <video src="assets/shots/take-me-hand-lockscreen.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <figcaption>锁屏逐字歌词</figcaption>
+      </figure>
+      <figure class="shot portrait">
+        <video src="assets/shots/take-me-hand-aod.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <figcaption>息屏 AOD 逐字歌词</figcaption>
+      </figure>
+      <figure class="shot landscape">
+        <video src="assets/shots/take-me-hand-landscape.mp4" autoplay muted loop playsinline preload="metadata"></video>
+        <figcaption>横屏 AOD · 全屏化居中</figcaption>
+      </figure>
+    </div>
+  </div>
+
+  <p class="shot-note">以上均为 HyperOS 3 真机录制:锁屏 / 息屏(AOD)/ 横屏三种曲面,逐字高亮、翻译副行与扫光效果实时跟随播放进度。</p>
 </section>
 
 <section id="features">
@@ -273,6 +310,20 @@
     与 MIUI / HyperOS 官方无关。
   </div>
 </footer>
+
+<script>
+  (function () {
+    var vids = document.querySelectorAll('#shots video');
+    if (!('IntersectionObserver' in window) || !vids.length) return;
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.play().catch(function () {}); }
+        else { e.target.pause(); }
+      });
+    }, { rootMargin: '120px' });
+    vids.forEach(function (v) { io.observe(v); });
+  })();
+</script>
 
 </body>
 </html>

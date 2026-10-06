@@ -2,13 +2,20 @@
 
 GitHub Pages 落地页(纯静态 HTML,无构建步骤)。
 
-## 更新截图
+## 更新实机演示视频
 
-`#shots` 区块预留了三个截图位。拿到实机截图后:
+`#shots` 区块按歌曲分两组展示真机录制的演示视频(每组:锁屏 / 息屏 AOD / 横屏各一段):
 
-1. 把图片放进 `assets/`(建议 `shot-lockscreen.jpg` / `shot-aod.jpg` / `shot-editor.jpg`,宽 1080);
-2. 把对应 `.shot` div 里的占位文字换成 `<img src="assets/xxx.jpg" alt="...">`;
+- 蝴蝶 · 洛天依 Official:`assets/shots/butterfly-{lockscreen,aod,landscape}.mp4`
+- Take Me Hand · DAISHI DANCE:`assets/shots/take-me-hand-{lockscreen,aod,landscape}.mp4`
+
+替换或新增步骤:
+
+1. 把视频放进 `assets/shots/`(H.264 + yuv420p + `+faststart`、**无音轨**、单条约 1~2MB);
+2. 修改 `index.html` 中对应 `<figure class="shot ...">` 里的 `<video src>`;
 3. 提交推送后 Pages 自动重新发布(1-3 分钟)。
+
+当前六段均统一为 **27.7 秒**、无声,自动循环播放(仅在进入视口时播放,页面底部有一小段 IntersectionObserver 脚本)。
 
 ## 启用 Pages(一次性)
 
